@@ -63,3 +63,9 @@ sqlite3 :memory: ".read tests/test.sql"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-lattice-mesh-handoff-detail.ps1
 
 sqlite3 :memory: ".read tests/domain_review.sql"
+
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-lattice-mesh-handoff-properties.ps1
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-lattice-mesh-handoff-golden.ps1
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
