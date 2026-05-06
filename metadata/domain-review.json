@@ -1,0 +1,73 @@
+{
+  "repo": "lattice-mesh-handoff-mesh",
+  "language": "SQL",
+  "category": "Distributed systems",
+  "goal": "Implement an SQL distributed systems project for handoff format conversion, using round-trip fixtures and lossless normalization checks.",
+  "review_model": {
+    "terms": [
+      "quorum health",
+      "lease drift",
+      "replica lag",
+      "membership churn"
+    ],
+    "lanes": [
+      "ship",
+      "watch",
+      "hold"
+    ],
+    "score": "signal * 2 + slack + confidence - drag * 3",
+    "purpose": "surface the domain-specific cases that need the most careful review"
+  },
+  "cases": [
+    {
+      "name": "baseline",
+      "focus": "quorum health",
+      "signal": 67,
+      "slack": 28,
+      "drag": 23,
+      "confidence": 79,
+      "score": 172,
+      "lane": "ship"
+    },
+    {
+      "name": "stress",
+      "focus": "lease drift",
+      "signal": 77,
+      "slack": 27,
+      "drag": 26,
+      "confidence": 91,
+      "score": 194,
+      "lane": "ship"
+    },
+    {
+      "name": "edge",
+      "focus": "replica lag",
+      "signal": 75,
+      "slack": 35,
+      "drag": 19,
+      "confidence": 56,
+      "score": 184,
+      "lane": "ship"
+    },
+    {
+      "name": "recovery",
+      "focus": "membership churn",
+      "signal": 68,
+      "slack": 36,
+      "drag": 19,
+      "confidence": 85,
+      "score": 200,
+      "lane": "ship"
+    },
+    {
+      "name": "stale",
+      "focus": "quorum health",
+      "signal": 59,
+      "slack": 31,
+      "drag": 23,
+      "confidence": 67,
+      "score": 147,
+      "lane": "ship"
+    }
+  ]
+}
