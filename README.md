@@ -1,43 +1,68 @@
 # lattice-mesh-handoff-mesh
 
-lattice-mesh-handoff-mesh is a SQL project for distributed systems. It focuses on this technical goal: Implement an SQL distributed systems project for handoff format conversion, using round-trip fixtures and lossless normalization checks.
+`lattice-mesh-handoff-mesh` explores distributed systems in SQL. The repository keeps the core rule set compact, then surrounds it with examples that show how the decisions move.
 
-## Why it exists
+## Lattice Mesh Handoff Mesh Notes
 
-Small engineering tools are easiest to trust when their rules are explicit, testable, and cheap to run locally. This repository packages a focused model with fixture data and a local verification path so behavior can be reviewed without external services.
+The quickest review path is the verifier first, then the fixtures, then the operations note. That order makes it easy to see whether the code, data, and explanation still agree.
 
-## Features
+## Implementation Notes
 
-- Deterministic policy scoring over fixture scenarios.
-- Clear accept or review decisions based on a documented threshold.
-- A command-line or local test path for quick validation.
-- Golden fixture data for repeatable checks.
-- Minimal dependencies and a compact project layout.
+The design is intentionally direct: parse or construct a signal, score it, classify it, and verify the expected branch. This makes the repository useful for studying distributed systems behavior without needing a service or database unless the language project itself is SQL. The SQL project uses sqlite fixtures, views, and assertions to keep query behavior inspectable.
 
-## Architecture Notes
+## Why This Exists
 
-The core module exposes a small scoring API. Inputs are simple numeric signals: demand, capacity, latency, risk, and weight. The score uses a threshold of 177, risk penalty 7, latency penalty 4, and weight bonus 3. Tests exercise the public API against the fixture cases in `fixtures/cases.csv`.
+The goal is to capture the core behavior in code and make the surrounding assumptions obvious. A reader should be able to run the verifier, open the fixtures, and understand why each decision was made.
 
-## Setup
+## Feature Notes
 
-Install the SQL toolchain and run commands from the repository root.
+- Uses fixture data to keep quorum behavior changes visible in code review.
+- Includes extended examples for lease timing, including `surge` and `degraded`.
+- Documents message ordering tradeoffs in `docs/operations.md`.
+- Runs locally with a single verification command and no external credentials.
+- Stores project constants and verification metadata in `metadata/project.json`.
 
-## Usage
+## Example Scenarios
+
+`examples/extended_cases.csv` adds six named cases. I kept the names plain so failures are easy to read in a terminal: baseline, pressure, surge, degraded, recovery, and boundary.
+
+## Code Tour
+
+- `tests`: verification harness
+- `fixtures`: compact golden scenarios
+- `examples`: expanded scenario set
+- `metadata`: project constants and verification metadata
+- `docs`: operations and extension notes
+- `scripts`: local verification and audit commands
+- `schema.sql`: sqlite schema and view definitions
+
+## Local Setup
+
+Clone the repository, enter the directory, and run the verifier. No database server, cloud account, or token is required.
+
+## Try It
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-The verification script builds or runs the project and checks the fixture decisions.
+This runs the language-level build or test path against the compact fixture set.
 
 ## Tests
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
 ```
 
-## Limitations And Roadmap
+The audit command checks repository structure and README constraints before it delegates to the verifier.
 
-- The fixture set is intentionally small so it can be audited by hand.
-- Future work could add richer domain-specific input adapters.
-- The model is a local demonstration and does not claim production use.
+## Boundaries
+
+The repository favors determinism over breadth. It does not pull live data, keep secrets, or depend on network access for verification.
+
+## Roadmap
+
+- Split the scoring constants into a typed configuration object and validate it before use.
+- Add a comparison mode that shows how decisions change when one signal is adjusted.
+- Add a loader for `examples/extended_cases.csv` and promote selected cases into the language test suite.
+- Add one more distributed systems fixture that focuses on a malformed or borderline input.
